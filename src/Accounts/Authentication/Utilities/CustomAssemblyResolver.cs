@@ -25,6 +25,7 @@ namespace Microsoft.Azure.Commands.Profile.Utilities
             new Dictionary<string, Version>(StringComparer.InvariantCultureIgnoreCase)
             {
                 {"Azure.Core", new Version("1.25.0.0")},
+                {"Azure.ResourceManager", new Version("1.3.0.0") },
                 {"Microsoft.Bcl.AsyncInterfaces", new Version("1.1.1.0")},
                 {"Microsoft.Identity.Client", new Version("4.39.0.0") },
                 {"Microsoft.Identity.Client.Extensions.Msal", new Version("2.19.3.0") },
