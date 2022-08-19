@@ -24,10 +24,14 @@ namespace Microsoft.Azure.Commands.Profile.Utilities
         private static IDictionary<string, Version> NetFxPreloadAssemblies =
             new Dictionary<string, Version>(StringComparer.InvariantCultureIgnoreCase)
             {
-                {"Azure.Core", new Version("1.24.0.0")},
+                {"Azure.Core", new Version("1.25.0.0")},
+                {"Azure.Identity.BrokeredAuthentication", new Version("1.0.0.0") },
                 {"Microsoft.Bcl.AsyncInterfaces", new Version("1.1.1.0")},
-                {"Microsoft.Identity.Client", new Version("4.39.0.0") },
-                {"Microsoft.Identity.Client.Extensions.Msal", new Version("2.19.3.0") },
+                {"Microsoft.Identity.Client", new Version("4.46.0.0") },
+                {"Microsoft.Identity.Client.Broker", new Version("4.46.0.0") },
+                {"Microsoft.Identity.Client.Extensions.Msal", new Version("2.23.0.0") },
+                {"Microsoft.Identity.Client.NativeInterop", new Version("0.9.0.0")},
+                {"Microsoft.IdentityModel.Abstractions", new Version("6.18.0.0")},
                 {"Microsoft.IdentityModel.Clients.ActiveDirectory", new Version("3.19.2.6005")},
                 {"Microsoft.IdentityModel.Clients.ActiveDirectory.Platform", new Version("3.19.2.6005")},
                 {"Newtonsoft.Json", new Version("10.0.0.0")},

@@ -16,11 +16,13 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Azure.Core;
 using Azure.Identity;
+using Azure.Identity.BrokeredAuthentication;
 
 using Hyak.Common;
 
@@ -46,7 +48,7 @@ namespace Microsoft.Azure.PowerShell.Authenticators
         {
             var interactiveParameters = parameters as InteractiveParameters;
             var onPremise = interactiveParameters.Environment.OnPremise;
-            //null instead of "organizations" should be passed to Azure.Identity to support MSA account 
+            //null instead of "organizations" should be passed to Azure.Identity to support MSA account
             var tenantId = onPremise ? AdfsTenant :
                 (string.Equals(parameters.TenantId, OrganizationsTenant, StringComparison.OrdinalIgnoreCase) ? null : parameters.TenantId);
             var tokenCacheProvider = interactiveParameters.TokenCacheProvider;
@@ -57,14 +59,17 @@ namespace Microsoft.Azure.PowerShell.Authenticators
             var requestContext = new TokenRequestContext(scopes);
             var authority = interactiveParameters.Environment.ActiveDirectoryAuthority;
 
-            var options = new InteractiveBrowserCredentialOptions()
+            var options = new InteractiveBrowserCredentialBrokerOptions(GetConsoleWindow())
             {
                 ClientId = clientId,
                 TenantId = tenantId,
                 TokenCachePersistenceOptions = tokenCacheProvider.GetTokenCachePersistenceOptions(),
                 AuthorityHost = new Uri(authority),
+                // MSAL doesn't rely on redirect URI from user input,
+                // it always calculate it as "ms-appx-web://microsoft.aad.brokerplugin/{clientId}",
+                // so the below RedirectUri is not for WAM, but for browser fallback.
                 RedirectUri = GetReplyUrl(onPremise, interactiveParameters),
-                LoginHint = interactiveParameters.UserId,
+                LoginHint = interactiveParameters.UserId
             };
             var browserCredential = new InteractiveBrowserCredential(options);
 
@@ -77,6 +82,32 @@ namespace Microsoft.Azure.PowerShell.Authenticators
                 requestContext,
                 cancellationToken);
         }
+
+        // todo: this causes the WAM login Window to self-close on PowerShell 7.0
+        // need investigation
+        private static IntPtr GetWindowHandle()
+        {
+            IntPtr psWindowHandle;
+            Process process = null;
+            try
+            {
+                process = ParentProcessUtilities.GetFirstParentProcessWithNoneZeroMainWindowHandle();
+            }
+            catch { }
+            if (process == null)
+            {
+                psWindowHandle = (IntPtr)0;
+            }
+            else
+            {
+                psWindowHandle = process.MainWindowHandle;
+            }
+
+            return psWindowHandle;
+        }
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
 
         private Uri GetReplyUrl(bool onPremise, InteractiveParameters interactiveParameters)
         {

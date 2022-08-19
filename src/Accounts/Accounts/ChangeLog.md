@@ -19,6 +19,7 @@
 -->
 
 ## Upcoming Release
+* Supported Web Account Manager (WAM) as the default interactive login experience.
 
 ## Version 2.9.1
 * Implemented `SupportsShouldProcess` for `Invoke-AzRestMethod`
