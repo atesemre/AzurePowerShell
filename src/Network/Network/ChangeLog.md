@@ -19,6 +19,7 @@
 --->
 
 ## Upcoming Release
+* Supported Network Security Perimeter resource
 * Fixed a bug that removes existing resource tags during a Set-AzFirewallPolicy command 
 * Fixed required parameter `PrivateLinkResourceType` missing issue for the following cmdlets [#18655]
     - `Get-AzPrivateEndpointConnection`
